@@ -19,13 +19,17 @@ public class LoanService {
         this.loans = new ArrayList<>();
     }
 
+
     public void addLoan(String id, String isbm)throws NotFoundException{
         var user = userService.getUserById(id);
         var book = bookService.getBook(isbm);
         loans.add(new Loan(user, book,BookStatus.LOAN));
-       // falta hacerlo con el primer contrucrtor por el loanData, pero no se porque no lo trae
+ 
     }
 
+    public List<Loan> getLoans(){
+        return loans;
+    }
     public void returnBook(String id, String isbm) throws NotFoundException{
         for (var loan : loans) {
             if (loan.getUser().getId().equals(id)

@@ -1,5 +1,6 @@
 package com.challenge3.services;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,8 @@ import com.challenge3.model.Book;
 public class BookService {
     private List<Book> books;
 
-    public BookService(){
-        books= new ArrayList<>();
+    public BookService(List<Book> books) { 
+        this.books = books;
     }
 
     public List<Book> getBooks() {
@@ -18,16 +19,15 @@ public class BookService {
     }
 
 
-    public void addBook( String isbm,String author,String title)throws NotFoundException{
+    public void addBook(String isbm, String author, String title, LocalDate registerDate) throws NotFoundException {
         for (var book : books) {
-            if (!book.getIsbm().equals(isbm)) {
-                books.add(new Book(isbm, title, author));
-                //si no existe lo crea
+            if (book.getIsbm().equals(isbm)) {
+                throw new NotFoundException("El ISBN: " + isbm + " ya está registrado");
             }
         }
-
-        throw new NotFoundException("El isbm: "+ isbm+" ya esta regitrado");
+        books.add(new Book(isbm, title, author)); // Se agrega después de verificar toda la lista
     }
+    
 
 
 
@@ -42,13 +42,12 @@ public class BookService {
     }
 
 
-    public void  deleteBook( String isbm)throws NotFoundException{
-        for (var book : books) {
-            if (book.getIsbm().equals(isbm)) {
-                books.remove(isbm);
-            }
+    public void deleteBook(String isbm) throws NotFoundException {
+        boolean removed = books.removeIf(book -> book.getIsbm().equals(isbm));
+    
+        if (!removed) {
+            throw new NotFoundException("El isbm: " + isbm + " no fue encontrado.");
         }
-        throw new NotFoundException("El isbm: "+isbm+" no fue encontrado.");
-
     }
+    
 }
